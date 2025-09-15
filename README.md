@@ -1,4 +1,4 @@
-# Barbearia Manager - Angular Front-End
+# BarberApp - Angular Front-End
 
 Aplicação web desenvolvida para a disciplina de Desenvolvimento Web Front-End da Universidade FUMEC. A aplicação permite gerenciar uma barbearia com cadastro de usuários, serviços, agendamentos e dashboard de relatórios.
 
