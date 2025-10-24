@@ -1,6 +1,8 @@
+import { AuthService } from './../../services/authService';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Credentials } from '../../services/authService';
 @Component({
   selector: 'app-login',
   imports: [CommonModule, FormsModule],
@@ -8,12 +10,20 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./login.css']
 })
 export class Login {
+  constructor(private authService: AuthService) { }
+  public email: string = '';
+  public password: string = '';
+  public login(): void {
 
-  email: string = '';
-  password: string = '';
+    const credentials: Credentials = {
+      email: this.email,
+      password: this.password
+    };
+    this.authService.login(credentials);
 
-  printInformation() {
-    console.log(`Email: ${this.email}, Password: ${this.password}`);
+
   }
+
+
 
 }

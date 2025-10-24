@@ -1,6 +1,9 @@
+
+import { AuthService } from './../../services/authService';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { User } from '../../services/authService';
 @Component({
   selector: 'app-register',
   imports: [CommonModule, FormsModule],
@@ -9,28 +12,37 @@ import { FormsModule } from '@angular/forms';
 })
 
 export class Register {
+  constructor(private authService: AuthService) { }
 
 
-  public nome: string = '';
-  public cpf: string = '';
-  public email: string = '';
-  public celular: string = '';
-  public password: string = '';
+  public cpf: string = ""
+  public name: string = ""
+  public email: string = ""
+  public phone: string = ""
+  public password: string = ""
 
-  constructor() { }
 
   public registrar(): void {
 
 
-    const dadosUsuario = {
-      nome: this.nome,
+    const dataUser: User = {
       cpf: this.cpf,
+      name: this.name,
       email: this.email,
-      celular: this.celular,
-      senha: this.password
+      phone: this.phone,
+      password: this.password
     };
 
-    console.log("Dados do novo usuário:", dadosUsuario);
+
+    if (dataUser.name === "" || dataUser.cpf === "" || dataUser.email === "" || dataUser.phone === "" || dataUser.password === "") {
+      console.log("Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+
+
+    this.authService.register(dataUser);
+
+
 
   }
 
