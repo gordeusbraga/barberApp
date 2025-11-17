@@ -23,20 +23,23 @@ export class CreateServiceService {
 
 
     public getServicos(): Observable<any[]> {
-        return this.http.get<any[]>(this.apiUrl, {
+
+        const url = `${this.apiUrl}?is_active=eq.true&select=*`;
+
+        return this.http.get<any[]>(url, {
             headers: this.httpOptions.headers
         });
     }
-
 
     public createServico(servicoData: any): Observable<any> {
         const url = `${this.apiUrl}?select=*`;
 
         return this.http.post<any>(url, servicoData, this.httpOptions);
     }
-    public deleteServico(id: number): Observable<any> {
+    public archiveServico(id: number): Observable<any> {
         const url = `${this.apiUrl}?id=eq.${id}`;
-        return this.http.delete<any>(url, this.httpOptions);
+
+        return this.http.patch(url, { is_active: false }, this.httpOptions);
     }
     public getServicoById(id: string): Observable<any> {
 

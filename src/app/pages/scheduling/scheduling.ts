@@ -1,4 +1,3 @@
-
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -15,8 +14,14 @@ interface CalendarioDia {
   desabilitado: boolean;
 }
 
+
+const HORARIOS_DE_TRABALHO = [
+  '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
+  '14:00', '14:30', '15:00', '15:30', '16:00', '16:30'
+];
+
 @Component({
-  selector: 'app-scheduling',
+  selector: 'app-agendamento',
   standalone: true,
   imports: [CommonModule, RouterLink, Header],
   templateUrl: './scheduling.html',
@@ -24,8 +29,8 @@ interface CalendarioDia {
 export class Scheduling implements OnInit {
 
   isLoading = true;
+  isLoadingHorarios = false;
   servico: any = null;
-
 
   dataBase = new Date();
   diasDoMes: CalendarioDia[] = [];
@@ -48,22 +53,16 @@ export class Scheduling implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
     const hoje = new Date();
     this.dataSelecionada = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
 
-
     this.profileService.getCurrentProfile().pipe(take(1)).subscribe(profile => {
-      if (profile) {
-        this.clienteId = profile.id;
-      }
+      if (profile) { this.clienteId = profile.id; }
     });
-
 
     this.route.paramMap.pipe(take(1)).subscribe(params => {
       this.servicoId = params.get('id');
       if (this.servicoId) {
-
         this.createService.getServicoById(this.servicoId).subscribe(data => {
           this.servico = data;
           this.isLoading = false;
@@ -71,30 +70,22 @@ export class Scheduling implements OnInit {
       }
     });
 
-
     this.gerarCalendario();
     this.carregarHorarios();
   }
 
-
   mudarMes(offset: number): void {
-
     this.dataBase.setDate(1);
     this.dataBase.setMonth(this.dataBase.getMonth() + offset);
-
     this.gerarCalendario();
   }
-
 
   gerarCalendario(): void {
     this.diasDoMes = [];
     const ano = this.dataBase.getFullYear();
     const mes = this.dataBase.getMonth();
-
-
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
-
 
     this.mesAtualStr = this.dataBase.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
     this.mesAtualStr = this.mesAtualStr.charAt(0).toUpperCase() + this.mesAtualStr.slice(1);
@@ -102,25 +93,16 @@ export class Scheduling implements OnInit {
     const primeiroDiaSemana = new Date(ano, mes, 1).getDay();
     const ultimoDiaMes = new Date(ano, mes + 1, 0).getDate();
 
-
     for (let i = 0; i < primeiroDiaSemana; i++) {
       this.diasDoMes.push({ numero: 0, valido: false, desabilitado: true });
     }
 
-
     for (let i = 1; i <= ultimoDiaMes; i++) {
       const diaAtual = new Date(ano, mes, i);
-
       const desabilitado = diaAtual < hoje;
-
-      this.diasDoMes.push({
-        numero: i,
-        valido: true,
-        desabilitado: desabilitado
-      });
+      this.diasDoMes.push({ numero: i, valido: true, desabilitado: desabilitado });
     }
   }
-
 
   isMesAtual(): boolean {
     const hoje = new Date();
@@ -130,16 +112,28 @@ export class Scheduling implements OnInit {
 
 
   carregarHorarios(): void {
+    if (!this.dataSelecionada) return;
 
-    this.horariosDisponiveis = [
-      '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
-      '14:00', '14:30', '15:00', '15:30', '16:00', '16:30'
-    ];
+    this.isLoadingHorarios = true;
+    this.horariosDisponiveis = [];
+    this.horarioSelecionado = null;
+
+
+    this.schedulingService.getHorariosOcupados(this.dataSelecionada).pipe(
+      take(1)
+    ).subscribe(horariosOcupados => {
+
+
+      this.horariosDisponiveis = HORARIOS_DE_TRABALHO.filter(horario => {
+
+        return !horariosOcupados.includes(horario);
+      });
+
+      this.isLoadingHorarios = false;
+    });
   }
 
-
   selecionarDia(dia: CalendarioDia): void {
-
     if (!dia.valido || dia.desabilitado) return;
 
     this.dataSelecionada = new Date(
@@ -147,8 +141,8 @@ export class Scheduling implements OnInit {
       this.dataBase.getMonth(),
       dia.numero
     );
+
     this.carregarHorarios();
-    this.horarioSelecionado = null;
   }
 
   selecionarHorario(horario: string): void {
@@ -167,20 +161,16 @@ export class Scheduling implements OnInit {
       alert("Por favor, selecione um dia e um horário.");
       return;
     }
-
     this.isLoading = true;
-
     const [horas, minutos] = this.horarioSelecionado.split(':');
     const dataHoraFinal = new Date(this.dataSelecionada);
     dataHoraFinal.setHours(parseInt(horas, 10));
     dataHoraFinal.setMinutes(parseInt(minutos, 10));
-
     const agendamentoData = {
       client_id: this.clienteId,
       service_id: this.servicoId,
       appointment_time: dataHoraFinal.toISOString()
     };
-
     try {
       await this.schedulingService.createAgendamento(agendamentoData).toPromise();
       alert('Agendamento realizado com sucesso!');
@@ -192,5 +182,4 @@ export class Scheduling implements OnInit {
       this.isLoading = false;
     }
   }
-
 }

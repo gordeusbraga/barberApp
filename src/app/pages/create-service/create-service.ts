@@ -1,9 +1,9 @@
-
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CreateServiceService } from '../../services/create-service';
 import { CommonModule } from '@angular/common';
 import { Header } from 'app/components/header/header';
+
 @Component({
   selector: 'app-create-service',
   standalone: true,
@@ -18,7 +18,6 @@ export class CreateService implements OnInit {
 
   serviceForm!: FormGroup;
   isLoading = false;
-
 
   servicosCadastrados: any[] = [];
 
@@ -36,17 +35,15 @@ export class CreateService implements OnInit {
       price: ['', [Validators.required, Validators.min(0)]]
     });
 
-
     this.loadServicos();
   }
 
-
   loadServicos(): void {
+
     this.createService.getServicos().subscribe(data => {
       this.servicosCadastrados = data;
     });
   }
-
 
   get f() {
     return this.serviceForm.controls;
@@ -61,9 +58,7 @@ export class CreateService implements OnInit {
     this.isLoading = true;
 
     try {
-
       const novoServico = await this.createService.createServico(this.serviceForm.value).toPromise();
-
       alert('Serviço cadastrado com sucesso!');
       this.serviceForm.reset();
       this.servicosCadastrados.push(novoServico);
@@ -74,26 +69,27 @@ export class CreateService implements OnInit {
     } finally {
       this.isLoading = false;
     }
-
-
   }
-  async deleteService(serviceId: number) {
-    if (!confirm('Tem certeza que deseja excluir este serviço?')) {
+
+
+  async archiveService(serviceId: number) {
+    if (!confirm('Tem certeza que deseja arquivar este serviço?')) {
       return;
     }
     this.isLoading = true;
 
     try {
-      await this.createService.deleteServico(serviceId).toPromise();
+
+      await this.createService.archiveServico(serviceId).toPromise();
+
       this.servicosCadastrados = this.servicosCadastrados.filter(servico => servico.id !== serviceId);
-      alert('Serviço excluído com sucesso!');
-    }
-    catch (error) {
-      console.error('Erro ao excluir serviço:', error);
-      alert('Erro ao excluir serviço. Tente novamente.');
+      alert('Serviço arquivado com sucesso!');
+
+    } catch (error) {
+      console.error('Erro ao arquivar serviço:', error);
+      alert('Erro ao arquivar serviço. Tente novamente.');
     } finally {
       this.isLoading = false;
     }
   }
-
 }
