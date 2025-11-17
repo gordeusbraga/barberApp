@@ -1,0 +1,101 @@
+<app-header></app-header>
+
+<div class="w-[90%] mx-auto font-sans border-b-2 border-purple-600 pb-4 mb-6">
+    <section class="relative flex items-center p-6">
+        <a routerLink="/servicos" class="h-6 w-6 cursor-pointer absolute left-6 top-1/2 -translate-y-1/2">
+            <img src="../../../assets/arrow.png" alt="voltar" />
+        </a>
+        <h2 class="w-full text-center text-2xl font-semibold pt-3">
+            Agendamento
+        </h2>
+    </section>
+</div>
+
+<div class="p-6 max-w-lg mx-auto font-sans" *ngIf="!isLoading">
+
+    <div *ngIf="servico"
+        class="bg-white rounded-xl shadow-lg border border-gray-200 p-4 flex items-center space-x-4 mb-8">
+        <img src="assets/scissors.png" alt="Serviço" class="w-13 h-13 rounded-full">
+        <div>
+            <h3 class="text-sm font-medium text-gray-500">Serviço Escolhido</h3>
+            <p class="text-xl font-semibold text-gray-900">{{ servico.name }}</p>
+            <p class="text-md text-gray-700">R$ {{ servico.price }} • {{ servico.duration_minutes }} min</p>
+        </div>
+    </div>
+
+    <div class="flex items-center space-x-3 mb-4">
+        <img src="assets/calendar.png" alt="Calendário" class=" h-8 opacity-70 inline-block">
+        <h3 class="text-xl font-semibold text-gray-800 inline-block ml-3">
+            Selecione uma data
+        </h3>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-4 mb-8">
+
+        <div class="flex justify-between items-center text-lg font-semibold text-purple-700 mb-4">
+
+            <button (click)="mudarMes(-1)" [disabled]="isMesAtual()"
+                class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-purple-100 disabled:opacity-25 disabled:cursor-not-allowed">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+
+            <span class="capitalize">{{ mesAtualStr }}</span>
+
+            <button (click)="mudarMes(1)"
+                class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-purple-100">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-7 gap-1 text-center mb-2">
+            <div *ngFor="let dia of diasSemana" class="font-medium text-gray-500 text-sm">{{ dia }}</div>
+        </div>
+
+        <div class="grid grid-cols-7 gap-1">
+            <div *ngFor="let dia of diasDoMes" (click)="selecionarDia(dia)" [ngClass]="{
+                    'opacity-0': !dia.valido,
+                    'text-gray-400 line-through cursor-not-allowed': dia.desabilitado,
+                    'cursor-pointer hover:bg-purple-100': dia.valido && !dia.desabilitado,
+                    'bg-purple-600 text-white': isDiaSelecionado(dia),
+                    'text-gray-800': !isDiaSelecionado(dia) && dia.valido && !dia.desabilitado
+                 }" class="w-10 h-10 flex items-center justify-center rounded-full text-lg transition-colors">
+                {{ dia.numero > 0 ? dia.numero : '' }}
+            </div>
+        </div>
+    </div>
+
+    <div class="flex items-center space-x-3 mb-4">
+        <img src="../../../assets/clock.png" alt="Relógio" class="w-10 h-10 opacity-70 inline-block">
+        <h3 class="text-xl font-semibold text-gray-800 inline-block ml-3">
+            Horários Disponíveis
+        </h3>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-4 mb-8">
+        <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            <button *ngFor="let horario of horariosDisponiveis" (click)="selecionarHorario(horario)" [ngClass]="{
+                        'bg-purple-600 text-white': horario === horarioSelecionado,
+                        'bg-gray-100 text-purple-800 hover:bg-purple-100': horario !== horarioSelecionado
+                    }" class="p-2 rounded-lg font-medium text-center transition-colors">
+                {{ horario }}
+            </button>
+            <div *ngIf="horariosDisponiveis.length === 0" class="col-span-full text-center text-gray-500 py-4">
+                Nenhum horário disponível para esta data.
+            </div>
+        </div>
+    </div>
+
+    <button (click)="onSubmit()" [disabled]="!horarioSelecionado || isLoading"
+        class="w-full rounded-full bg-purple-600 py-4 text-xl font-semibold text-white shadow-lg transition-colors hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:shadow-none">
+        <span *ngIf="!isLoading">Agendar</span>
+        <span *ngIf="isLoading">Agendando...</span>
+    </button>
+</div>
+
+<div *ngIf="isLoading" class="text-center p-20">
+    <p class="text-lg text-gray-500">Carregando...</p>
+</div>

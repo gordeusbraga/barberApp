@@ -32,28 +32,26 @@ export class Login {
     if (this.loginForm.invalid) {
       console.log("Form is invalid");
       this.loginForm.markAllAsTouched();
-      return; // Pare aqui
+      return;
     }
 
-    // 6. Se for válido, COMECE O LOADING
 
 
     try {
-      // Pega as credenciais
+
       const credentials: Credentials = {
         email: this.loginForm.value.email,
         password: this.loginForm.value.password
       };
       console.log(credentials);
 
-      // 7. CHAME O SERVIÇO (o que estava faltando)
+
       await this.authService.login(credentials);
-      // Se o login for bem-sucedido, o service vai navegar
+
 
     } catch (error) {
       console.error("Login failed:", error);
-      // 8. Se der erro, mostre ao usuário (opcional)
-      // E pare o loading
+
     }
   }
 

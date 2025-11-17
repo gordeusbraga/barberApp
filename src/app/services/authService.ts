@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import {
     createClient,
     SupabaseClient,
-    AuthError,
     User as SupabaseUser
 } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';

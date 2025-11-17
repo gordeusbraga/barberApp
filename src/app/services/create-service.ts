@@ -1,7 +1,7 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -38,4 +38,14 @@ export class CreateServiceService {
         const url = `${this.apiUrl}?id=eq.${id}`;
         return this.http.delete<any>(url, this.httpOptions);
     }
+    public getServicoById(id: string): Observable<any> {
+
+        const url = `${this.apiUrl}?id=eq.${id}&select=*`;
+
+        return this.http.get<any[]>(url, { headers: this.httpOptions.headers }).pipe(
+
+            map(servicos => (servicos && servicos.length > 0) ? servicos[0] : null)
+        );
+    }
+
 }

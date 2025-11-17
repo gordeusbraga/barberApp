@@ -30,33 +30,32 @@ export class Register implements OnInit {
 
 
 
-  async Register(): Promise<void> { // Tornamos ela async
+  async Register(): Promise<void> {
 
-    // 7. Validação PRIMEIRO
+
     if (this.registerForm.invalid) {
       console.log("Formulário inválido.");
-      this.registerForm.markAllAsTouched(); // Mostra todos os erros
-      return; // Para aqui
+      this.registerForm.markAllAsTouched();
+      return;
     }
 
-    // 8. Se for válido, inicie o loading
+
     this.isLoading = true;
 
     try {
-      // O 'this.registerForm.value' JÁ É um objeto 'User' 
-      // (desde que os formControlNames sejam iguais )
+
       await this.authService.register(this.registerForm.value);
-      // O service (que já refatoramos) cuida de navegar
+
 
     } catch (error) {
       console.error("Erro ao registrar:", error);
-      // TODO: Mostrar um erro para o usuário
+
     } finally {
-      this.isLoading = false; // Pare o loading
+      this.isLoading = false;
     }
   }
 
-  // 8. O "atalho" para o HTML
+
   get f() {
     return this.registerForm.controls;
   }

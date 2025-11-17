@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/authService';
-
+import { ProfileService } from '../../services/profileService';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { Observable } from 'rxjs';
 import { RouterLink } from '@angular/router';
@@ -19,13 +19,16 @@ export class Header implements OnInit {
   public isModalOpen: boolean = false;
 
   public user$!: Observable<SupabaseUser | null | undefined>;
+  public profile$!: Observable<any | null>;
 
-  constructor(private authService: AuthService) {
-
-  }
+  constructor(
+    private authService: AuthService,
+    private profileService: ProfileService
+  ) { }
 
   ngOnInit(): void {
     this.user$ = this.authService.user$;
+    this.profile$ = this.profileService.getCurrentProfile();
   }
 
   public toggleMenu(): void {
@@ -35,7 +38,6 @@ export class Header implements OnInit {
   public toggleModal(): void {
     this.isModalOpen = !this.isModalOpen;
   }
-
 
   public logout(): void {
     this.authService.logout();

@@ -1,8 +1,14 @@
+
+
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Header } from '../../components/header/header';
 import { CreateServiceService } from '../../services/create-service';
+import { SchedulingService } from '../../services/scheduling';
+import { ProfileService } from '../../services/profileService';
+import { switchMap, take } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -10,36 +16,60 @@ import { CreateServiceService } from '../../services/create-service';
   imports: [
     CommonModule,
     RouterLink,
-    Header
+    Header,
+    DatePipe
   ],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
 export class Home implements OnInit {
 
-
   servicosCadastrados: any[] = [];
-  isLoading: boolean = true;
+  isLoadingServicos: boolean = true;
 
   agendamentos: any[] = [];
+  isLoadingAgendamentos: boolean = true;
 
-
-  constructor(private createService: CreateServiceService) { }
-
+  constructor(
+    private createService: CreateServiceService,
+    private schedulingService: SchedulingService,
+    private profileService: ProfileService
+  ) { }
 
   ngOnInit(): void {
 
     this.createService.getServicos().subscribe(
       (data) => {
         this.servicosCadastrados = data;
-        this.isLoading = false;
+        this.isLoadingServicos = false;
       },
       (error) => {
         console.error('Erro ao buscar serviços:', error);
-        this.isLoading = false;
+        this.isLoadingServicos = false;
       }
     );
 
 
+    this.isLoadingAgendamentos = true;
+    this.profileService.getCurrentProfile().pipe(
+      take(1),
+      switchMap(profile => {
+
+        if (!profile) {
+          return of([]);
+        }
+
+        return this.schedulingService.getAgendamentosPorCliente(profile.id);
+      })
+    ).subscribe(
+      (data) => {
+        this.agendamentos = data;
+        this.isLoadingAgendamentos = false;
+      },
+      (error) => {
+        console.error('Erro ao buscar agendamentos:', error);
+        this.isLoadingAgendamentos = false;
+      }
+    );
   }
 }

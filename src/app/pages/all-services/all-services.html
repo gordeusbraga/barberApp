@@ -1,0 +1,43 @@
+<app-header></app-header>
+
+<div class="w-[90%] mx-auto font-sans border-b-2 border-purple-600 pb-4 mb-6">
+    <section class="relative flex items-center p-6">
+        <img src="../../../assets/arrow.png" alt="voltar"
+            class="h-6 cursor-pointer absolute left-6 top-1/2 -translate-y-1" routerLink="/home" />
+        <h2 class="w-full text-center text-2xl font-semibold pt-3 pl-8">
+            Serviços Cadastrados
+        </h2>
+    </section>
+</div>
+
+<section class="w-[90%] mx-auto font-sans mb-10">
+
+    <ul *ngIf="servicosCadastrados.length > 0" class="mt-4 space-y-3 w-full">
+
+        <li *ngFor="let servico of servicosCadastrados"
+            class="p-4 bg-white rounded-xl shadow-md border border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+
+            <div>
+                <p class="font-semibold text-gray-800">{{ servico.name }}</p>
+                <p class="text-sm text-gray-500">{{ servico.barber_name }}</p>
+            </div>
+
+            <div class="text-left sm:text-right mt-4 sm:mt-0">
+                <p class="font-semibold text-purple-600">R$ {{ servico.price }}</p>
+                <p class="text-sm text-gray-500">{{ servico.duration_minutes }} min</p>
+            </div>
+
+            <div class="mt-4 sm:mt-0 sm:ml-6">
+                <button
+                    class="w-full sm:w-auto rounded-lg bg-purple-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+                    <a [routerLink]="['/agendar', servico.id]">Agendar</a>
+                </button>
+            </div>
+        </li>
+    </ul>
+
+    <div *ngIf="servicosCadastrados.length === 0" class="flex flex-col items-center text-gray-500 mt-8 py-4">
+        <img src="../../../assets/calendar.png" alt="Calendário" class="w-20 h-20 opacity-70" />
+        <p class="mt-4 text-lg">Nenhum Serviço Cadastrado</p>
+    </div>
+</section>
