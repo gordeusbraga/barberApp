@@ -31,6 +31,10 @@
                         <div class="sm:ml-4">
                             <p class="font-semibold text-lg text-gray-800">{{ agendamento.services.name }}</p>
                             <p class="text-sm text-gray-500">{{ agendamento.services.barber_name }}</p>
+                            <button (click)="cancelar(agendamento)"
+                                class="flex-1 rounded-lg bg-red-600 px-6 mt-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700">
+                                Cancelar
+                            </button>
                         </div>
                     </div>
 
