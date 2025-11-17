@@ -15,8 +15,8 @@ export class ProfileService {
 
     private httpOptions = {
         headers: new HttpHeaders({
-            'apikey': environment.supabaseKey,
-            'Authorization': `Bearer ${environment.supabaseKey}`
+            'apikey': environment.supabaseKey!,
+            'Authorization': `Bearer ${environment.supabaseKey!}`
         })
     };
 

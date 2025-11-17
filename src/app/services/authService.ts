@@ -34,8 +34,8 @@ export class AuthService {
     constructor(private router: Router) {
 
         this.supabase = createClient(
-            environment.supabaseUrl,
-            environment.supabaseKey
+            environment.supabaseUrl!,
+            environment.supabaseKey!
         );
 
 

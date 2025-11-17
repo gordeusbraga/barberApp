@@ -14,8 +14,8 @@ export class RelatorioService {
 
     private httpOptions = {
         headers: new HttpHeaders({
-            'apikey': environment.supabaseKey,
-            'Authorization': `Bearer ${environment.supabaseKey}`,
+            'apikey': environment.supabaseKey!,
+            'Authorization': `Bearer ${environment.supabaseKey!}`,
             'Content-Type': 'application/json'
         })
     };
