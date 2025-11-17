@@ -72,4 +72,25 @@ export class Home implements OnInit {
       }
     );
   }
+  cancelar(agendamento: any): void {
+
+
+    agendamento.isLoading = true;
+
+
+    this.schedulingService.updateAgendamentoStatus(agendamento.id, 'cancelado').subscribe(
+      () => {
+
+        this.agendamentos = this.agendamentos.filter(item => item.id !== agendamento.id);
+
+
+      },
+      (error) => {
+
+        console.error('Erro ao cancelar agendamento:', error);
+        agendamento.isLoading = false;
+
+      }
+    );
+  }
 }

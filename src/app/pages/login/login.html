@@ -47,9 +47,17 @@
                 </div>
             </div>
 
-            <button type="submit" class="mb-4 w-full rounded-lg bg-purple-600 py-3 text-white"
-                [disabled]="loginForm.invalid">
-                Entrar
+            <div *ngIf="authError"
+                class="text-red-600 bg-red-50 border border-red-300 rounded-lg p-3 text-sm mb-4 text-center">
+                {{ authError }}
+            </div>
+
+
+            <button type="submit"
+                class="mb-4 w-full rounded-lg bg-purple-600 py-3 text-white transition-colors hover:bg-purple-700 disabled:bg-gray-400"
+                [disabled]="loginForm.invalid || isLoading">
+                <span *ngIf="!isLoading">Entrar</span>
+                <span *ngIf="isLoading">Entrando...</span>
             </button>
         </form>
 

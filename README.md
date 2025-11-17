@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # BarberApp
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.4.
@@ -91,4 +91,4 @@ Aplicação web desenvolvida para a disciplina de Desenvolvimento Web Front-End 
 6. Tela Sobre Nós
 7. Tela de Relatórios
 8. Tela de Cadastro de Serviços (Admin)
->>>>>>> 92001996c1a49608b13f5f1c694106894b9eb479
+
