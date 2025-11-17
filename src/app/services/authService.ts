@@ -1,80 +1,116 @@
+
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+
+import {
+    createClient,
+    SupabaseClient,
+    AuthError,
+    User as SupabaseUser
+} from '@supabase/supabase-js';
+import { environment } from '../../environments/environment';
+import { BehaviorSubject, Observable } from 'rxjs';
+
+
 export type User = {
-    cpf: string,
-    name: string,
-    email: string,
-    phone: string,
-    password: string
-}
+    cpf: string;
+    name: string;
+    email: string;
+    phone: string;
+    password: string;
+};
+
 export type Credentials = {
-    email: string,
-    password: string
-}
+    email: string;
+    password: string;
+};
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: 'root',
 })
 export class AuthService {
-    private userRegistered: boolean = false;
-    private userLoggedIn: boolean = false;
-    public userLoggedCpf: string = "";
-    private users: User[] = [];
-    constructor(private router: Router) { }
-    public login(credentials: Credentials): boolean {
-        const user = this.getUserByEmail(credentials.email);
+    private supabase: SupabaseClient;
 
-        if (!user || user.password !== credentials.password) {
-            console.log(this.users)
+    private currentUser = new BehaviorSubject<SupabaseUser | null>(null);
 
-            console.log("Invalid email or password.");
-            return false;
-        }
-        console.log("User logged in:", user);
-        console.log(this.users)
+    constructor(private router: Router) {
 
-        this.userLoggedIn = true;
-        this.userLoggedCpf = user.cpf;
-        if (this.userLoggedIn) {
-            this.router.navigate(['/home']);
-        }
-        return user !== undefined;
+        this.supabase = createClient(
+            environment.supabaseUrl,
+            environment.supabaseKey
+        );
 
 
+        this.loadUserSession();
     }
 
-    public register(user: User): void {
 
-        if (this.getUserByCpf(user.cpf)) {
-            console.log("User with this CPF already exists.");
-            return;
-        }
-        this.users.push(user);
+    async loadUserSession() {
+        const { data } = await this.supabase.auth.getSession();
+        this.currentUser.next(data.session?.user ?? null);
+    }
 
-        console.log("User registered:", user);
-        this.userRegistered = true;
 
-        if (this.userRegistered) {
-            this.router.navigate(['/']);
+    get user$(): Observable<SupabaseUser | null> {
+        return this.currentUser.asObservable();
+    }
+
+
+    public async login(credentials: Credentials) {
+
+        const { data, error } = await this.supabase.auth.signInWithPassword({
+            email: credentials.email,
+            password: credentials.password,
+        });
+
+        if (error) {
+            console.error('Erro no login:', error.message);
+            throw error;
         }
 
 
-    }
-
-    public getUsers(): User[] {
-        return this.users;
-    }
-
-    public getUserByCpf(cpf: string): User | undefined {
-        return this.users.find(u => u.cpf === cpf);
-    }
-    public getUserByEmail(email: string): User | undefined {
-        return this.users.find(u => u.email === email);
+        this.currentUser.next(data.user);
+        this.router.navigate(['/home']);
+        return data;
     }
 
 
+    public async register(user: User) {
+
+        const { data, error } = await this.supabase.auth.signUp({
+            email: user.email,
+            password: user.password,
+            options: {
+
+                data: {
+                    name: user.name,
+                    cpf: user.cpf,
+                    phone: user.phone,
+                },
+            },
+        });
+
+        if (error) {
+            console.error('Erro no registro:', error.message);
+            throw error;
+        }
 
 
+        this.router.navigate(['/']);
+        return data;
+    }
 
 
+    public async logout() {
+        const { error } = await this.supabase.auth.signOut();
+
+        if (error) {
+            console.error('Erro no logout:', error.message);
+            throw error;
+        }
+
+
+        this.currentUser.next(null);
+        this.router.navigate(['/']);
+    }
 }

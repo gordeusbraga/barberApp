@@ -27,18 +27,19 @@
     </div>
 
     <div [ngClass]="{ 'translate-x-0': isMenuOpen, '-translate-x-full': !isMenuOpen }" class="fixed top-0 left-0 w-64 h-screen bg-white shadow-xl z-50
-              transition-transform duration-300 ease-in-out">
+                      transition-transform duration-300 ease-in-out">
 
         <div class="p-6">
             <h2 class="text-2xl font-semibold text-purple-600 mb-6">BarberApp</h2>
             <nav class="flex flex-col space-y-3">
-                <a href="#"
+                <a routerLink="/"
                     class="text-gray-700 hover:text-purple-600 text-lg p-2 rounded-md hover:bg-purple-50">Home</a>
-                <a href="#" class="text-gray-700 hover:text-purple-600 text-lg p-2 rounded-md hover:bg-purple-50">Meus
+                <a routerLink="/appointments"
+                    class="text-gray-700 hover:text-purple-600 text-lg p-2 rounded-md hover:bg-purple-50">Meus
                     Agendamentos</a>
-                <a href="#"
+                <a routerLink="/services"
                     class="text-gray-700 hover:text-purple-600 text-lg p-2 rounded-md hover:bg-purple-50">Serviços</a>
-                <a href="#"
+                <a routerLink="/settings"
                     class="text-gray-700 hover:text-purple-600 text-lg p-2 rounded-md hover:bg-purple-50">Configurações</a>
             </nav>
         </div>
@@ -47,7 +48,7 @@
 
     <div *ngIf="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
 
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 relative">
+        <div *ngIf="user$ | async as user" class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 relative">
 
             <button (click)="toggleModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
                 <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -61,24 +62,24 @@
             <div class="space-y-3">
                 <div>
                     <label class="text-sm font-medium text-gray-500">Nome</label>
-                    <p class="text-lg text-gray-900">{{ cliente.name }}</p>
+                    <p class="text-lg text-gray-900">{{ user.user_metadata['name'] }}</p>
                 </div>
                 <div>
                     <label class="text-sm font-medium text-gray-500">E-mail</label>
-                    <p class="text-lg text-gray-900">{{ cliente.email }}</p>
+                    <p class="text-lg text-gray-900">{{ user.email }}</p>
                 </div>
                 <div>
                     <label class="text-sm font-medium text-gray-500">Telefone</label>
-                    <p class="text-lg text-gray-900">{{ cliente.phone }}</p>
+                    <p class="text-lg text-gray-900">{{ user.user_metadata['phone'] }}</p>
                 </div>
                 <div>
                     <label class="text-sm font-medium text-gray-500">CPF</label>
-                    <p class="text-lg text-gray-900">{{ cliente.cpf }}</p>
+                    <p class="text-lg text-gray-900">{{ user.user_metadata['cpf'] }}</p>
                 </div>
-
             </div>
 
-            <button class="mt-8 w-full rounded-lg bg-red-600 py-2.5 text-white font-medium hover:bg-red-700">
+            <button (click)="logout()"
+                class="mt-8 w-full rounded-lg bg-red-600 py-2.5 text-white font-medium hover:bg-red-700">
                 Sair (Logout)
             </button>
         </div>
