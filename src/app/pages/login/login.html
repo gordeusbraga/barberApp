@@ -11,40 +11,46 @@
             <p class="mt-4 text-gray-500 text-[18px]">Faça login para continuar</p>
         </div>
 
-        <form>
+        <form [formGroup]="loginForm" (ngSubmit)="login()">
             <div class="relative mb-4">
                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
                     <img src="assets/emailLogo.png" alt="emailLogo" class="h-4" />
                 </div>
-                <input type="email" placeholder="E-mail" name="email"
+
+                <input type="email" placeholder="E-mail"
                     class="w-full rounded-lg border border-gray-300 py-3 pl-11 pr-4 text-gray-900 placeholder-gray-500 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    [(ngModel)]="email" />
+                    formControlName="email" />
+            </div>
+
+            <div *ngIf="f['email'].touched && f['email'].invalid" class="text-red-500 text-sm mb-2">
+                <div *ngIf="f['email'].errors?.['required']">
+                    O e-mail é obrigatório.
+                </div>
+                <div *ngIf="f['email'].errors?.['email']">
+                    Formato de e-mail inválido.
+                </div>
             </div>
 
             <div class="relative mb-4">
                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
                     <img src="assets/senhaLogo.png" alt="passwordLogo" class="h-5 " />
                 </div>
-                <input type="password" placeholder="Senha" name="password"
+
+                <input type="password" placeholder="Senha"
                     class="w-full rounded-lg border border-gray-300 py-3 pl-11 pr-11 text-gray-900 placeholder-gray-500 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    [(ngModel)]="password" />
-                <button type="button" class="absolute inset-y-0 right-0 flex items-center pr-3.5">
-                    <img src="assets/eyePassword.png" alt="showPasswordLogo" class="h-4" />
-                </button>
+                    formControlName="password" />
             </div>
 
-            <button type="submit"
-                class="mb-4 w-full rounded-lg bg-purple-600 py-3 text-lg font-semibold text-white transition-colors hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-                (click)="login()">
+            <div *ngIf="f['password'].touched && f['password'].invalid" class="text-red-500 text-sm mb-2">
+                <div *ngIf="f['password'].errors?.['required']">
+                    A senha é obrigatória.
+                </div>
+            </div>
+
+            <button type="submit" class="mb-4 w-full rounded-lg bg-purple-600 py-3 text-white"
+                [disabled]="loginForm.invalid">
                 Entrar
-
             </button>
-
-            <div class="mb-6 text-center">
-                <a href="#" class="text-[17px] text-gray-500 hover:text-purple-600 hover:underline">
-                    Esqueceu a senha?
-                </a>
-            </div>
         </form>
 
         <div class="text-center text-sm text-gray-500 text-[17px]">

@@ -1,49 +1,63 @@
 
 import { AuthService } from './../../services/authService';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { User } from '../../services/authService';
 @Component({
   selector: 'app-register',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './register.html',
   styleUrl: './register.css'
 })
 
-export class Register {
-  constructor(private authService: AuthService) { }
+export class Register implements OnInit {
 
+  constructor(private authService: AuthService, private fb: FormBuilder
+  ) { }
+  registerForm!: FormGroup;
+  isLoading: boolean = false;
 
-  public cpf: string = ""
-  public name: string = ""
-  public email: string = ""
-  public phone: string = ""
-  public password: string = ""
-
-
-  public registrar(): void {
-
-
-    const dataUser: User = {
-      cpf: this.cpf,
-      name: this.name,
-      email: this.email,
-      phone: this.phone,
-      password: this.password
-    };
-
-
-    if (dataUser.name === "" || dataUser.cpf === "" || dataUser.email === "" || dataUser.phone === "" || dataUser.password === "") {
-      console.log("Por favor, preencha todos os campos obrigatórios.");
-      return;
-    }
-
-
-    this.authService.register(dataUser);
-
-
-
+  ngOnInit() {
+    this.registerForm = this.fb.group({
+      cpf: ['', Validators.required],
+      name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(6)]]
+    });
   }
 
+
+
+  async Register(): Promise<void> { // Tornamos ela async
+
+    // 7. Validação PRIMEIRO
+    if (this.registerForm.invalid) {
+      console.log("Formulário inválido.");
+      this.registerForm.markAllAsTouched(); // Mostra todos os erros
+      return; // Para aqui
+    }
+
+    // 8. Se for válido, inicie o loading
+    this.isLoading = true;
+
+    try {
+      // O 'this.registerForm.value' JÁ É um objeto 'User' 
+      // (desde que os formControlNames sejam iguais )
+      await this.authService.register(this.registerForm.value);
+      // O service (que já refatoramos) cuida de navegar
+
+    } catch (error) {
+      console.error("Erro ao registrar:", error);
+      // TODO: Mostrar um erro para o usuário
+    } finally {
+      this.isLoading = false; // Pare o loading
+    }
+  }
+
+  // 8. O "atalho" para o HTML
+  get f() {
+    return this.registerForm.controls;
+  }
 }
