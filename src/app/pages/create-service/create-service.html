@@ -1,0 +1,123 @@
+<app-header></app-header>
+<div class="p-6 max-w-lg mx-auto font-sans">
+    <section class="mb-10">
+        <h2 class="text-2xl font-semibold border-b-2 border-purple-600 pb-2 mb-4">
+            Serviços Cadastrados
+        </h2>
+
+
+        <ul *ngIf="servicosCadastrados.length > 0" class="mt-4 space-y-3">
+            <li *ngFor="let servico of servicosCadastrados"
+                class="p-4 bg-white rounded-xl shadow-md border border-gray-200 flex  items-center">
+                <img src="../../../assets/trash.png" alt="Excluir Serviço" class="h-5 w-5 cursor-pointer mr-4"
+                    (click)="deleteService(servico.id)" />
+                <div>
+                    <p class="font-semibold text-gray-800 w-80">{{ servico.name }}</p>
+                    <p class="text-sm text-gray-500">{{ servico.barber_name }}</p>
+                </div>
+                <div class="text-right">
+                    <p class="font-semibold text-purple-600">R$ {{ servico.price }}</p>
+                    <p class="text-sm text-gray-500">{{ servico.duration_minutes }} min</p>
+                </div>
+            </li>
+        </ul>
+
+
+        <div *ngIf="servicosCadastrados.length === 0" class="flex flex-col items-center text-gray-500 mt-8 py-4">
+
+            <img src="../../../assets/calendar.png" alt="Calendário" class="w-20 h-20 opacity-70" />
+            <p class="mt-4 text-lg">Nenhum Serviço Cadastrado</p>
+        </div>
+    </section>
+
+    <section>
+        <h2 class="text-2xl font-semibold border-b-2 border-purple-600 pb-2 mb-8">
+            Cadastrar Serviço
+        </h2>
+
+        <form [formGroup]="serviceForm" (ngSubmit)="onSubmit()" class="space-y-2">
+
+
+            <div class="relative">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+
+                    <img src="../../../assets/etiqueta.png" alt="service" class="h-5 w-5">
+                </div>
+                <input type="text" placeholder="Nome do Serviço" formControlName="name"
+                    class="w-full rounded-xl border-2 border-gray-200 py-4 pl-12 pr-4 text-gray-900 placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500">
+            </div>
+            <div *ngIf="f['name'].touched && f['name'].invalid" class="text-red-500 text-sm mb-2 ml-2">
+                Nome é obrigatório.
+            </div>
+
+
+            <div class="relative">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+
+                    <img src="assets/person.png" alt="person" class="h-5 w-5">
+                </div>
+                <input type="text" placeholder="Nome do Barbeiro" formControlName="barber_name"
+                    class="w-full rounded-xl border-2 border-gray-200 py-4 pl-12 pr-4 text-gray-900 placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500">
+            </div>
+            <div *ngIf="f['barber_name'].touched && f['barber_name'].invalid" class="text-red-500 text-sm mb-2 ml-2">
+                Nome do barbeiro é obrigatório.
+            </div>
+
+
+            <div class="relative">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+
+                    <svg class="w-5 h-5 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                    </svg>
+                </div>
+                <input type="text" placeholder="Descrição" formControlName="description"
+                    class="w-full rounded-xl border-2 border-gray-200 py-4 pl-12 pr-4 text-gray-900 placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500">
+            </div>
+            <div *ngIf="f['description'].touched && f['description'].invalid" class="text-red-500 text-sm mb-2 ml-2">
+                Descrição é obrigatória.
+            </div>
+
+
+            <div class="relative">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+
+                    <svg class="w-5 h-5 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <input type="number" placeholder="Duração (minutos)" formControlName="duration_minutes"
+                    class="w-full rounded-xl border-2 border-gray-200 py-4 pl-12 pr-4 text-gray-900 placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500">
+            </div>
+            <div *ngIf="f['duration_minutes'].touched && f['duration_minutes'].invalid"
+                class="text-red-500 text-sm mb-2 ml-2">
+                Duração é obrigatória (mín. 1 min).
+            </div>
+
+
+            <div class="relative">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+
+                    <span class="text-lg font-medium text-purple-600">R$</span>
+                </div>
+                <input type="number" placeholder="Preço (R$)" formControlName="price"
+                    class="w-full rounded-xl border-2 border-gray-200 py-4 pl-12 pr-4 text-gray-900 placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500">
+            </div>
+            <div *ngIf="f['price'].touched && f['price'].invalid" class="text-red-500 text-sm mb-2 ml-2">
+                Preço é obrigatório.
+            </div>
+
+
+            <button type="submit" [disabled]="serviceForm.invalid || isLoading"
+                class="w-full rounded-full bg-purple-600 py-4 text-xl font-semibold text-white shadow-lg transition-colors hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:shadow-none mt-6">
+                <span *ngIf="!isLoading">Cadastrar</span>
+                <span *ngIf="isLoading">Cadastrando...</span>
+            </button>
+
+        </form>
+    </section>
+</div>

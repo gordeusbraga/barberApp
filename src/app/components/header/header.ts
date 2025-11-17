@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'; // 1. Importe OnInit
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/authService';
 
@@ -18,7 +18,7 @@ export class Header implements OnInit {
   public isMenuOpen: boolean = false;
   public isModalOpen: boolean = false;
 
-  public user$!: Observable<SupabaseUser | null>;
+  public user$!: Observable<SupabaseUser | null | undefined>;
 
   constructor(private authService: AuthService) {
 

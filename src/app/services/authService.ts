@@ -1,7 +1,6 @@
 
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-
 import {
     createClient,
     SupabaseClient,
@@ -31,7 +30,7 @@ export type Credentials = {
 export class AuthService {
     private supabase: SupabaseClient;
 
-    private currentUser = new BehaviorSubject<SupabaseUser | null>(null);
+    private currentUser = new BehaviorSubject<SupabaseUser | null | undefined>(undefined);
 
     constructor(private router: Router) {
 
@@ -51,7 +50,7 @@ export class AuthService {
     }
 
 
-    get user$(): Observable<SupabaseUser | null> {
+    get user$(): Observable<SupabaseUser | null | undefined> {
         return this.currentUser.asObservable();
     }
 
