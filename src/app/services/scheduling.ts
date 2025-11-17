@@ -27,9 +27,29 @@ export class SchedulingService {
 
         return this.http.post<any>(this.apiUrl, agendamentoData, this.httpOptions);
     }
+
     public getAgendamentosPorCliente(clientId: string): Observable<any[]> {
-        const url = `${this.apiUrl}?client_id=eq.${clientId}&select=*,services(*)`;
+
+        const url = `${this.apiUrl}?client_id=eq.${clientId}&status=eq.agendado&select=*,services(*)`;
 
         return this.http.get<any[]>(url, { headers: this.httpOptions.headers });
     }
+
+    public getAllAgendamentos(): Observable<any[]> {
+
+
+        const url = `${this.apiUrl}?select=*,services(*),profiles(name)`;
+
+
+        return this.http.get<any[]>(url, { headers: this.httpOptions.headers });
+    }
+
+
+    public updateAgendamentoStatus(id: number, status: 'concluido' | 'cancelado'): Observable<any> {
+        const url = `${this.apiUrl}?id=eq.${id}`;
+        const body = { status: status };
+        return this.http.patch(url, body, this.httpOptions);
+    }
+
+
 }
