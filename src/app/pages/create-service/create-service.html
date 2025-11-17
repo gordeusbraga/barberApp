@@ -9,8 +9,8 @@
         <ul *ngIf="servicosCadastrados.length > 0" class="mt-4 space-y-3">
             <li *ngFor="let servico of servicosCadastrados"
                 class="p-4 bg-white rounded-xl shadow-md border border-gray-200 flex  items-center">
-                <img src="../../../assets/trash.png" alt="Excluir Serviço" class="h-5 w-5 cursor-pointer mr-4"
-                    (click)="deleteService(servico.id)" />
+                <img src="../../../assets/trash.png" alt="Arquivar Serviço" class="h-5 w-5 cursor-pointer mr-4"
+                    (click)="archiveService(servico.id)" />
                 <div>
                     <p class="font-semibold text-gray-800 w-80">{{ servico.name }}</p>
                     <p class="text-sm text-gray-500">{{ servico.barber_name }}</p>
